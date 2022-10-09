@@ -6,10 +6,50 @@
 
     <body>
         <div style="width: 50%;margin-left:25%;margin-top: 10%;">
-            <a href="https://www.sippo.blog">
+            <a id="login">
                 <button style="width:100px;height:40px;border:radius">oculus</button>
             </a>
         </div>
+
+        <script>
+            function make_url(){
+                const id = process.env.ORGANIZATION_ID
+                const redirect_url = window.location.href
+                let url = `https://auth.oculus.com/sso/?redirect_uri=${redirect_url}&organization_id=${id}`
+                document.getElementById("id").setAttribute("href",url)
+            }
+
+            function handle_hash(){
+                const hash = window.location.hash 
+                if (hash) {
+                    const json = JSON.parse(atob(hash))
+                    console.log(`json submitted is:${json}`)
+
+                    const id = json["org_scoped_id"]
+                    const code = json["code"]
+                    const token = process.env.ACESS_TOKEN
+                    
+                    const post_url = "https://graph.oculus.com/sso_authorize_code"
+                    jQuery.postsync(
+                        post_url,
+                        {org_scoped_id:id,code:code,access_token:token},
+                        (data)=>{
+                            const dic = JSON.parse(data);
+
+
+                        },
+                        "json"
+                        )
+                }
+
+            }
+
+            function dust(){
+                console.log(process.env.hoge)
+            }
+            dust()
+            
+        </script>
     </body>
 
 </html>
